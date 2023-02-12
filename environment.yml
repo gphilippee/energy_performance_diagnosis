@@ -1,0 +1,15 @@
+name: <TODO>
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyter
+  - pip
+  - pip:
+      - ramp-workflow
+      - osfclient
