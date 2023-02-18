@@ -5,6 +5,10 @@ from rampwf.workflows.sklearn_pipeline import SKLearnPipeline, Estimator
 from rampwf.prediction_types import make_regression
 
 from sklearn.model_selection import KFold
+import requests
+import json
+import io
+import pandas as pd
 
 problem_title = "TODO"
 
@@ -29,19 +33,16 @@ Predictions = rw.prediction_types.make_regression()
 
 
 # Data
-def get_train_data(path="."):
+def get_data():
     """
 
     :param path:
-    :return: X, y
+    :return: df
     """
-    return np.random.randn(100, 10), np.random.randn(100)
+    # URL de l'API pour les données DPE tertiaire
+    url = "https://data.ademe.fr/data-fair/api/v1/datasets/dpe-tertiaire/full"
 
-
-def get_test_data(path="."):
-    """
-
-    :param path:
-    :return: X, y
-    """
-    return np.random.randn(100, 10), np.random.randn(100)
+    # Envoi de la requête
+    response = requests.get(url)
+    df = pd.read_csv(io.StringIO(response.text))
+    return df
