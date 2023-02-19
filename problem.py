@@ -39,15 +39,17 @@ Predictions = rw.prediction_types.make_regression()
 
 # Data
 def _read_data(path, type_):
-    dir = Path(path)
+    data_dir = Path(path) / "data"
 
     if type_ == "train":
-        X_train = pd.read_parquet(dir / "data_train.parquet")
-        y_train = pd.read_csv(dir / "labels_train.csv")
+        X_train = pd.read_parquet(data_dir / "data_train.parquet")
+        X_train.set_index("id", inplace=True)
+        y_train = pd.read_csv(data_dir / "labels_train.csv", index_col=0)
         return X_train, y_train
     elif type_ == "test":
-        X_test = pd.read_parquet(dir / "data_test.parquet")
-        y_test = pd.read_csv(dir / "labels_test.csv")
+        X_test = pd.read_parquet(data_dir / "data_test.parquet")
+        X_test.set_index("id", inplace=True)
+        y_test = pd.read_csv(data_dir / "labels_test.csv", index_col=0)
         return X_test, y_test
     else:
         raise Exception("type_ must be 'train' or 'test'")
