@@ -9,5 +9,8 @@ ramp-workflow
 requests
 pyarrow
 
+seaborn
+matplotlib
+
 tqdm
 ruff
