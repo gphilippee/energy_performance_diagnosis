@@ -3,6 +3,8 @@ import pandas as pd
 import rampwf as rw
 from rampwf.workflows.sklearn_pipeline import SKLearnPipeline, Estimator
 from rampwf.prediction_types import make_regression
+from sklearn.model_selection import train_test_split
+
 
 from sklearn.model_selection import KFold
 import requests
@@ -33,16 +35,29 @@ Predictions = rw.prediction_types.make_regression()
 
 
 # Data
-def get_data():
-    """
+# Data
+def _read_data(path, type_):
 
-    :param path:
-    :return: df
-    """
-    # URL de l'API pour les données DPE tertiaire
-    url = "https://data.ademe.fr/data-fair/api/v1/datasets/dpe-tertiaire/full"
+    fname = "data.csv"
+    fp = os.path.join(path, "data", fname)
+    data = pd.read_csv(fp, index_col=0)
+    
+    y = data[['classe_consommation_energie', 'estimation_ges']]
+    X = data.drop(columns = ['classe_consommation_energie', 'estimation_ges'], axis=0)
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                        test_size=0.3)
+    
+    if type_ == "train":
+        return X_train, y_train
+    
+    else:
+        return X_test, y_test
+    
 
-    # Envoi de la requête
-    response = requests.get(url)
-    df = pd.read_csv(io.StringIO(response.text))
-    return df
+def get_train_data(path="."):
+    return _read_data(path, "train")
+
+
+def get_test_data(path="."):
+    return _read_data(path, "test")
