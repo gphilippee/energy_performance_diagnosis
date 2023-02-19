@@ -2,15 +2,18 @@ import numpy as np
 import pandas as pd
 import rampwf as rw
 from rampwf.workflows.sklearn_pipeline import SKLearnPipeline, Estimator
-from rampwf.prediction_types import make_regression
-from sklearn.model_selection import train_test_split
-
+from rampwf.prediction_types import make_multiclass
+from rampwf.score_types.base import BaseScoreType
+from rampwf.score_types.classifier_base import ClassifierBaseScoreType
 
 from sklearn.model_selection import KFold
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import log_loss, f1_score
+from pathlib import Path
 import requests
 import json
 import io
-import pandas as pd
+import os
 
 problem_title = "TODO"
 
@@ -35,25 +38,20 @@ Predictions = rw.prediction_types.make_regression()
 
 
 # Data
-# Data
 def _read_data(path, type_):
+    dir = Path(path)
 
-    fname = "data.csv"
-    fp = os.path.join(path, "data", fname)
-    data = pd.read_csv(fp, index_col=0)
-    
-    y = data[['classe_consommation_energie', 'estimation_ges']]
-    X = data.drop(columns = ['classe_consommation_energie', 'estimation_ges'], axis=0)
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=0.3)
-    
     if type_ == "train":
+        X_train = pd.read_parquet(dir / "data_train.parquet")
+        y_train = pd.read_csv(dir / "labels_train.csv")
         return X_train, y_train
-    
-    else:
+    elif type_ == "test":
+        X_test = pd.read_parquet(dir / "data_test.parquet")
+        y_test = pd.read_csv(dir / "labels_test.csv")
         return X_test, y_test
-    
+    else:
+        raise Exception("type_ must be 'train' or 'test'")
+
 
 def get_train_data(path="."):
     return _read_data(path, "train")
