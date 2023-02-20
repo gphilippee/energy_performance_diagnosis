@@ -18,10 +18,10 @@ def download_data(base_dir):
     response = requests.get(URL)
     data = pd.read_csv(io.StringIO(response.text), low_memory=False, index_col=0)
 
-    # Remove empty targets
+    # Remove target not in [A, B, C, D, E, F, G]
     data = data[
-        (data["classe_consommation_energie"] != "N")
-        & (data["classe_estimation_ges"] != "N")
+        (data["classe_consommation_energie"].isin(["A", "B", "C", "D", "E", "F", "G"]))
+        & (data["classe_estimation_ges"].isin(["A", "B", "C", "D", "E", "F", "G"]))
     ]
 
     # Remove target as values
