@@ -43,12 +43,10 @@ def _read_data(path, type_):
 
     if type_ == "train":
         X_train = pd.read_parquet(data_dir / "data_train.parquet")
-        X_train.set_index("id", inplace=True)
         y_train = pd.read_csv(data_dir / "labels_train.csv", index_col=0)
         return X_train, y_train
     elif type_ == "test":
         X_test = pd.read_parquet(data_dir / "data_test.parquet")
-        X_test.set_index("id", inplace=True)
         y_test = pd.read_csv(data_dir / "labels_test.csv", index_col=0)
         return X_test, y_test
     else:

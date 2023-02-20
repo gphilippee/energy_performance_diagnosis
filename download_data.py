@@ -16,7 +16,7 @@ def download_data(base_dir):
 
     # Request URL
     response = requests.get(URL)
-    data = pd.read_csv(io.StringIO(response.text), low_memory=False)
+    data = pd.read_csv(io.StringIO(response.text), low_memory=False, index_col=0)
 
     # Remove empty targets
     data = data[
