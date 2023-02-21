@@ -158,6 +158,7 @@ class Predictions(BaseMultiClassPredictions):
     @property
     def y_pred_label_index(self):
         """Multi-class y_pred is the index of the predicted label."""
+        # y_pred are np.ndarray here
         return (
             np.argmax(self.y_pred[:, :7], axis=1),
             np.argmax(self.y_pred[:, 7:], axis=1),

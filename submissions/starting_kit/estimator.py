@@ -28,12 +28,14 @@ class Classifier(BaseEstimator):
         self.model2 = LogisticRegression(max_iter=10_000)
 
     def fit(self, X, Y):
+        # Y are pd.DataFrame here
         self.model1.fit(X, Y.iloc[:, 0])
         self.model2.fit(X, Y.iloc[:, 1])
 
     def predict(self, X):
         y1 = self.model1.predict_proba(X)
         y2 = self.model2.predict_proba(X)
+        # Y_pred are nd.ndarray here
         Y_pred = np.concatenate([y1, y2], axis=1)
         # 2 discrete probability distributions
         assert Y_pred.shape[1] == 14
