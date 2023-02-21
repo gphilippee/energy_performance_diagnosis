@@ -1,8 +1,14 @@
 # RAMP starting kit on Energy Consumption (EC) and Greenhouse gases (GHG) classification
 
-_Authors: Cyril Zm, Guillaume Philippe, Matteo Ratet, Max Wu, Pierre Lovition, & Hugo Peltier_
+_Authors: Cyril Zaimi, Guillaume Philippe, Matteo Ratet, Max Wu, Pierre Loviton, & Hugo Peltier_
 
-TODO: WRITE THE INTRODUCTION TO THE COMPETITION
+# TODO
+[ ] Write paragraph for introduction
+[ ] Implement metrics (weight between classes, mixed, ...)
+[ ] Implement cross-validation
+[ ] Implement submission
+[ ] Encode categorical features
+[ ] Improve starting-kit
 
 #### Set up
 
