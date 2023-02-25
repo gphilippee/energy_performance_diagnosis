@@ -127,7 +127,7 @@ def download_data(base_dir):
     data = data[~data['annee_construction'].isin([0,1,2,3,4,5,6,7,8,9,10,11,12])]
 
     # Replace NaN by 0.0 for 'surface_commerciale_contractuelle'
-    data = data['surface_commerciale_contractuelle'] = data['surface_commerciale_contractuelle'].fillna(0.0)
+    data['surface_commerciale_contractuelle'] = data['surface_commerciale_contractuelle'].fillna(0.0)
 
     # Remove target as values
     data = data.drop(columns=["consommation_energie", "estimation_ges"], axis=0)
