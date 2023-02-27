@@ -93,8 +93,43 @@ class GESF1Score(ClassifierBaseScoreType):
         )
 
 
+class Mixed(BaseScoreType):
+    is_lower_the_better = True
+    minimum = 0.0
+    maximum = np.inf
+
+    def __init__(self, name="mixed", precision=2):
+        self.name = name
+        self.precision = precision
+        self.ges_ll = GESLogLoss()
+        self.ce_ll = CELogLoss()
+        self.ges_f1 = GESF1Score()
+        self.ce_f1 = CEF1Score()
+
+    def score_function(self, ground_truths, predictions):
+        return self.__call__(ground_truths, predictions)
+
+    def __call__(self, ground_truths, predictions):
+        # Log-loss
+        y_true = ground_truths.y_pred
+        y_pred = predictions.y_pred
+        ges_ll_score = self.ges_ll(y_true, y_pred)
+        ce_ll_score = self.ce_ll(y_true, y_pred)
+
+        # F1 score
+        y_true_label_index = ground_truths.y_pred_label_index
+        y_pred_label_index = predictions.y_pred_label_index
+        ges_f1_score = self.ges_f1(y_true_label_index, y_pred_label_index)
+        ce_f1_score = self.ce_f1(y_true_label_index, y_pred_label_index)
+        score = 0.5 * (ges_ll_score + ce_ll_score) + 0.1 * (
+            2 - ges_f1_score - ce_f1_score
+        )
+        return score
+
+
 # Scores
 score_types = [
+    Mixed(name="mixed", precision=2),
     GESLogLoss(name="ges_ll", precision=2),
     CELogLoss(name="ce_ll", precision=2),
     GESF1Score(name="ges_f1", precision=2, average="macro"),
