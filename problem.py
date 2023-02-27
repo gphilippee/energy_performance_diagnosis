@@ -18,7 +18,7 @@ import json
 import io
 import os
 
-problem_title = "TODO"
+problem_title = "Energy performance diagnosis"
 
 # Model
 workflow = Estimator()
