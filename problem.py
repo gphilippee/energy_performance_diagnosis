@@ -24,7 +24,7 @@ def get_cv(X, y):
         yield train_index, test_index
 
 
-class ECLoss(BaseScoreType):
+class ECWeightedLoss(BaseScoreType):
     """
     Some errors (e.g. predicting class "G" when it is class "A") might count
     for more in the final scores. The missclassification weights were designed
@@ -38,7 +38,7 @@ class ECLoss(BaseScoreType):
     minimum = 0.0
     maximum = np.inf
 
-    def __init__(self, name="ec_ll", precision=2, alpha=0.99):
+    def __init__(self, name="ec_wl", precision=2, alpha=0.99):
         self.name = name
         self.precision = precision
         self.alpha = alpha
@@ -129,7 +129,7 @@ class Mixed(BaseScoreType):
         self.name = name
         self.precision = precision
         self.ghg_ll = GHGLogLoss()
-        self.ec_ll = ECLoss()
+        self.ec_wl = ECWeightedLoss()
         self.ghg_f1 = GHGF1Score()
         self.ec_f1 = ECF1Score()
 
@@ -141,14 +141,14 @@ class Mixed(BaseScoreType):
         y_true = ground_truths.y_pred
         y_pred = predictions.y_pred
         ghg_ll_score = self.ghg_ll(y_true, y_pred)
-        ec_ll_score = self.ec_ll(y_true, y_pred)
+        ec_wl_score = self.ec_wl(y_true, y_pred)
 
         # F1 score
         y_true_label_index = ground_truths.y_pred_label_index
         y_pred_label_index = predictions.y_pred_label_index
         ghg_f1_score = self.ghg_f1(y_true_label_index, y_pred_label_index)
         ec_f1_score = self.ec_f1(y_true_label_index, y_pred_label_index)
-        score = 0.5 * (ghg_ll_score + ec_ll_score) + 0.1 * (
+        score = 0.5 * (ghg_ll_score + ec_wl_score) + 0.1 * (
             2 - ghg_f1_score - ec_f1_score
         )
         return score
@@ -158,7 +158,7 @@ class Mixed(BaseScoreType):
 score_types = [
     Mixed(name="mixed", precision=2),
     GHGLogLoss(name="ghg_ll", precision=2),
-    ECLoss(name="ec_ll", precision=2),
+    ECWeightedLoss(name="ec_ll", precision=2),
     GHGF1Score(name="ghg_f1", precision=2, average="macro"),
     ECF1Score(name="ec_f1", precision=2, average="macro"),
 ]

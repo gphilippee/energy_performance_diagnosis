@@ -35,6 +35,7 @@ def download_data(base_dir):
             "version_methode_dpe",
             "nom_methode_etude_thermique",
             "version_methode_etude_thermique",
+            "adresse_organisme_certificateur",
             "date_visite_diagnostiqueur",
             "date_etablissement_dpe",
             "date_arrete_tarifs_energies",
