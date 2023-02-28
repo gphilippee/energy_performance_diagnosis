@@ -2,7 +2,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.base import BaseEstimator
 from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 
 import numpy as np
 import pandas as pd
@@ -103,7 +102,8 @@ class Preprocessor(BaseEstimator):
             ]
         )
 
-        # list of columns to convert to float which is replacing a "\N" to "0.00" among possible values
+        # list of columns to convert to float
+        # replace "\N" by "0.00"
         nan_to_clean = [
             "surface_parois_verticales_opaques_deperditives",
             "surface_planchers_bas_deperditifs",

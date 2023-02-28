@@ -3,20 +3,13 @@ import warnings
 import numpy as np
 import pandas as pd
 import rampwf as rw
-from rampwf.workflows.sklearn_pipeline import SKLearnPipeline, Estimator
-from rampwf.prediction_types import make_multiclass
+from rampwf.workflows.sklearn_pipeline import Estimator
 from rampwf.score_types.base import BaseScoreType
 from rampwf.score_types.classifier_base import ClassifierBaseScoreType
-from rampwf.prediction_types.base import BasePrediction
 
 from sklearn.model_selection import KFold
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import log_loss, f1_score
+from sklearn.metrics import log_loss, f1_score, confusion_matrix
 from pathlib import Path
-import requests
-import json
-import io
-import os
 
 problem_title = "Energy performance diagnosis"
 
@@ -31,13 +24,13 @@ def get_cv(X, y):
         yield train_index, test_index
 
 
-class CELogLoss(BaseScoreType):
+class ECLogLoss(BaseScoreType):
     # subclass BaseScoreType to use raw y_pred (proba's)
     is_lower_the_better = True
     minimum = 0.0
     maximum = np.inf
 
-    def __init__(self, name="ce_ll", precision=2):
+    def __init__(self, name="ec_ll", precision=2):
         self.name = name
         self.precision = precision
 
@@ -46,13 +39,13 @@ class CELogLoss(BaseScoreType):
         return score
 
 
-class GESLogLoss(BaseScoreType):
+class GHGLogLoss(BaseScoreType):
     # subclass BaseScoreType to use raw y_pred (proba's)
     is_lower_the_better = True
     minimum = 0.0
     maximum = np.inf
 
-    def __init__(self, name="ges_ll", precision=2):
+    def __init__(self, name="ghg_ll", precision=2):
         self.name = name
         self.precision = precision
 
@@ -61,12 +54,12 @@ class GESLogLoss(BaseScoreType):
         return score
 
 
-class CEF1Score(ClassifierBaseScoreType):
+class ECF1Score(ClassifierBaseScoreType):
     is_lower_the_better = False
     minimum = 0.0
     maximum = 1.0
 
-    def __init__(self, name="ce_f1", precision=2, average="macro"):
+    def __init__(self, name="ec_f1", precision=2, average="macro"):
         self.name = name
         self.precision = precision
         self.average = average
@@ -77,12 +70,12 @@ class CEF1Score(ClassifierBaseScoreType):
         )
 
 
-class GESF1Score(ClassifierBaseScoreType):
+class GHGF1Score(ClassifierBaseScoreType):
     is_lower_the_better = False
     minimum = 0.0
     maximum = 1.0
 
-    def __init__(self, name="ges_f1", precision=2, average="macro"):
+    def __init__(self, name="ghg_f1", precision=2, average="macro"):
         self.name = name
         self.precision = precision
         self.average = average
@@ -101,10 +94,10 @@ class Mixed(BaseScoreType):
     def __init__(self, name="mixed", precision=2):
         self.name = name
         self.precision = precision
-        self.ges_ll = GESLogLoss()
-        self.ce_ll = CELogLoss()
-        self.ges_f1 = GESF1Score()
-        self.ce_f1 = CEF1Score()
+        self.ghg_ll = GHGLogLoss()
+        self.ec_ll = ECLogLoss()
+        self.ghg_f1 = GHGF1Score()
+        self.ec_f1 = ECF1Score()
 
     def score_function(self, ground_truths, predictions):
         return self.__call__(ground_truths, predictions)
@@ -113,27 +106,32 @@ class Mixed(BaseScoreType):
         # Log-loss
         y_true = ground_truths.y_pred
         y_pred = predictions.y_pred
-        ges_ll_score = self.ges_ll(y_true, y_pred)
-        ce_ll_score = self.ce_ll(y_true, y_pred)
+        ghg_ll_score = self.ghg_ll(y_true, y_pred)
+        ec_ll_score = self.ec_ll(y_true, y_pred)
 
         # F1 score
         y_true_label_index = ground_truths.y_pred_label_index
         y_pred_label_index = predictions.y_pred_label_index
-        ges_f1_score = self.ges_f1(y_true_label_index, y_pred_label_index)
-        ce_f1_score = self.ce_f1(y_true_label_index, y_pred_label_index)
-        score = 0.5 * (ges_ll_score + ce_ll_score) + 0.1 * (
-            2 - ges_f1_score - ce_f1_score
+        ghg_f1_score = self.ghg_f1(y_true_label_index, y_pred_label_index)
+        ec_f1_score = self.ec_f1(y_true_label_index, y_pred_label_index)
+        score = 0.5 * (ghg_ll_score + ec_ll_score) + 0.1 * (
+            2 - ghg_f1_score - ec_f1_score
         )
+
+        print("GHG")
+        print(confusion_matrix(y_true_label_index[1], y_pred_label_index[1]))
+        print("EC")
+        print(confusion_matrix(y_true_label_index[0], y_pred_label_index[0]))
         return score
 
 
 # Scores
 score_types = [
     Mixed(name="mixed", precision=2),
-    GESLogLoss(name="ges_ll", precision=2),
-    CELogLoss(name="ce_ll", precision=2),
-    GESF1Score(name="ges_f1", precision=2, average="macro"),
-    CEF1Score(name="ce_f1", precision=2, average="macro"),
+    GHGLogLoss(name="ghg_ll", precision=2),
+    ECLogLoss(name="ec_ll", precision=2),
+    GHGF1Score(name="ghg_f1", precision=2, average="macro"),
+    ECF1Score(name="ec_f1", precision=2, average="macro"),
 ]
 
 # Predictions
