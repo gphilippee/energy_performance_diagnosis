@@ -61,9 +61,7 @@ def download_data(base_dir):
     data = data.dropna(subset=["latitude", "longitude"], how="any")
 
     # Remove the rows having weird construction date ~ 35k rows
-    data = data[
-        ~data["annee_construction"].isin([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
-    ]
+    data = data[(data['annee_construction'] < 2025) & (data['annee_construction'] > 500) ]
 
     # Create X and Y
     Y = data[["classe_consommation_energie", "classe_estimation_ges"]]

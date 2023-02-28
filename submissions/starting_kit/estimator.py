@@ -82,22 +82,12 @@ class Preprocessor(BaseEstimator):
                 "tv016_departement_c4",
                 "tv016_departement_t_ext_basse",
                 "tv016_departement_e",
-                "tv016_departement_fch",
-                "tv016_departement_fecs_ancienne_m_i",
-                "tv016_departement_fecs_recente_m_i",
-                "tv016_departement_fecs_solaire_m_i",
-                "tv016_departement_fecs_ancienne_i_c",
-                "tv016_departement_fecs_recente_i_c",
                 "tv017_zone_hiver_code",
                 "tv017_zone_hiver_t_ext_moyen",
                 "tv017_zone_hiver_peta_cw",
                 "tv017_zone_hiver_dh14",
                 "tv017_zone_hiver_prs1",
                 "tv018_zone_ete_code",
-                "tv018_zone_ete_sclim_inf_150",
-                "tv018_zone_ete_sclim_sup_150",
-                "tv018_zone_ete_rclim_autres_etages",
-                "tv018_zone_ete_rclim_dernier_etage",
             ]
         )
 
