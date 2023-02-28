@@ -23,15 +23,16 @@ def get_cv(X, y):
     for train_index, test_index in cv.split(X, y):
         yield train_index, test_index
 
+
 class ECLoss(BaseScoreType):
-    """    
+    """
     Some errors (e.g. predicting class "G" when it is class "A") might count
-    for more in the final scores. The missclassification weights were designed 
+    for more in the final scores. The missclassification weights were designed
     to penalize more mistakes on buildings with low energy efficiency.
 
     Bilinear Loss : https://arxiv.org/pdf/1704.06062.pdf
     """
-    
+
     # subclass BaseScoreType to use raw y_pred (proba's)
     is_lower_the_better = True
     minimum = 0.0
@@ -43,7 +44,6 @@ class ECLoss(BaseScoreType):
         self.alpha = alpha
 
     def __call__(self, y_true, y_pred):
-        
         L_CE = log_loss(y_true[:, 1:], y_pred[:, 1:])
 
         W = np.array(
@@ -63,9 +63,7 @@ class ECLoss(BaseScoreType):
         y_pred = np.argmax(y_pred[:, 1:], axis=1)
         y_true = np.argmax(y_true[:, 1:], axis=1)
 
-        conf_mat = confusion_matrix(
-            y_true, y_pred, labels=np.arange(n_classes)
-        )
+        conf_mat = confusion_matrix(y_true, y_pred, labels=np.arange(n_classes))
 
         n = len(y_true)
         L_B = np.multiply(conf_mat, W).sum() / n
