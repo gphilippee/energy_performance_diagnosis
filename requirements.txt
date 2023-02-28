@@ -6,6 +6,7 @@ jupyter
 ramp-workflow
 requests
 pyarrow
+folium
 
 seaborn
 matplotlib
