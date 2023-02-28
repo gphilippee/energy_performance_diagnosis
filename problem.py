@@ -23,19 +23,55 @@ def get_cv(X, y):
     for train_index, test_index in cv.split(X, y):
         yield train_index, test_index
 
+class ECLoss(BaseScoreType):
+    """    
+    Some errors (e.g. predicting class "G" when it is class "A") might count
+    for more in the final scores. The missclassification weights were designed 
+    to penalize more mistakes on buildings with low energy efficiency.
 
-class ECLogLoss(BaseScoreType):
+    Bilinear Loss : https://arxiv.org/pdf/1704.06062.pdf
+    """
+    
     # subclass BaseScoreType to use raw y_pred (proba's)
     is_lower_the_better = True
     minimum = 0.0
     maximum = np.inf
 
-    def __init__(self, name="ec_ll", precision=2):
+    def __init__(self, name="ec_ll", precision=2, alpha=0.99):
         self.name = name
         self.precision = precision
+        self.alpha = alpha
 
     def __call__(self, y_true, y_pred):
-        score = log_loss(y_true[:, 1:], y_pred[:, 1:])
+        
+        L_CE = log_loss(y_true[:, 1:], y_pred[:, 1:])
+
+        W = np.array(
+            [
+                [0, 5, 7, 10, 10, 10, 10],
+                [5, 0, 3, 8, 10, 10, 10],
+                [7, 3, 0, 4, 10, 10, 10],
+                [10, 8, 4, 0, 9, 10, 10],
+                [10, 10, 10, 9, 0, 8, 10],
+                [10, 10, 10, 10, 8, 0, 9],
+                [10, 10, 10, 10, 10, 9, 0],
+            ]
+        )
+        W = W / np.max(W)
+        n_classes = len(W)
+
+        y_pred = np.argmax(y_pred[:, 1:], axis=1)
+        y_true = np.argmax(y_true[:, 1:], axis=1)
+
+        conf_mat = confusion_matrix(
+            y_true, y_pred, labels=np.arange(n_classes)
+        )
+
+        n = len(y_true)
+        L_B = np.multiply(conf_mat, W).sum() / n
+
+        score = (1 - self.alpha) * L_CE + self.alpha * L_B
+
         return score
 
 
@@ -95,7 +131,7 @@ class Mixed(BaseScoreType):
         self.name = name
         self.precision = precision
         self.ghg_ll = GHGLogLoss()
-        self.ec_ll = ECLogLoss()
+        self.ec_ll = ECLoss()
         self.ghg_f1 = GHGF1Score()
         self.ec_f1 = ECF1Score()
 
@@ -129,7 +165,7 @@ class Mixed(BaseScoreType):
 score_types = [
     Mixed(name="mixed", precision=2),
     GHGLogLoss(name="ghg_ll", precision=2),
-    ECLogLoss(name="ec_ll", precision=2),
+    ECLoss(name="ec_ll", precision=2),
     GHGF1Score(name="ghg_f1", precision=2, average="macro"),
     ECF1Score(name="ec_f1", precision=2, average="macro"),
 ]
