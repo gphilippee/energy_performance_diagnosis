@@ -39,14 +39,14 @@ class Preprocessor(BaseEstimator):
                 "partie_batiment",
                 "en_souterrain",
                 "en_surface",
-                "nombre_circulations_verticales",  # faible variance
-                "nombre_boutiques",  # faible variance"
+                "nombre_circulations_verticales",
+                "nombre_boutiques",
                 "presence_verriere",
-                "type_vitrage_verriere",  # faible variance
+                "type_vitrage_verriere",
                 "etat_avancement",
-                "dpe_vierge",  # faible variance
-                "est_efface",  # faible variance
-                "date_reception_dpe",  # date
+                "dpe_vierge",
+                "est_efface",
+                "date_reception_dpe",
                 "geo_score",
                 "geo_type",
                 "geo_adresse",
