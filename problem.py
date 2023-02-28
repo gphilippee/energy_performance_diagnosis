@@ -153,11 +153,6 @@ class Mixed(BaseScoreType):
         score = 0.5 * (ghg_ll_score + ec_ll_score) + 0.1 * (
             2 - ghg_f1_score - ec_f1_score
         )
-
-        print("GHG")
-        print(confusion_matrix(y_true_label_index[1], y_pred_label_index[1]))
-        print("EC")
-        print(confusion_matrix(y_true_label_index[0], y_pred_label_index[0]))
         return score
 
 
