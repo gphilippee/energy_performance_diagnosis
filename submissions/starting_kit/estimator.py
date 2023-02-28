@@ -44,7 +44,6 @@ class Preprocessor(BaseEstimator):
                 "presence_verriere",
                 "type_vitrage_verriere",  # faible variance
                 "etat_avancement",
-                "adresse_organisme_certificateur",
                 "dpe_vierge",  # faible variance
                 "est_efface",  # faible variance
                 "date_reception_dpe",  # date
