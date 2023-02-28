@@ -4,14 +4,6 @@ _Authors: Cyril Zaimi, Guillaume Philippe, Matteo Ratet, Max Wu, Pierre Loviton,
 
 This challenge was done as a project for the Master 2 Data Science (2022/2023), DATACAMP course
 
-# TODO
-- [x] Write paragraph for introduction
-- [ ] Implement metrics (weight between classes, mixed, ...)
-- [x] Implement cross-validation
-- [ ] Implement submission
-- [ ] Encode categorical features
-- [ ] Improve starting-kit
-
 ## Introduction
 
 One of the main levers of the ecological transition is to act on emissions from buildings. Indeed, according to the International Energy Agency, they account for approximately 28% of national greenhouse gas emissions. This is why this sector is at the heart of a massive investment plan launched in 2021 by the government. France has set itself the goal of reducing the energy consumption of existing buildings by 38% by 2030. 
